@@ -1,8 +1,9 @@
 // Have LED dim/brighten based on input from light sensor
+// NOTE: Must use DWM-capable digital pin in order to "fade" the LED
 //
 
-const int lightSensor = 5;   // A5
-const int blueLED = 1;       // A1
+const int lightSensor = 2;   // A2 - Analog input
+const int blueLED = 5;       // D5 - PWM output
 
 void setup() {
   Serial.begin(9600);
@@ -10,13 +11,15 @@ void setup() {
 }
 
 void loop() {
-  //float lightLevel = map( analogRead(lightSensor),100,700,0,255); // Convert 100-700 range to 0-100
-  float lightLevel = analogRead(lightSensor);
-  Serial.println(lightLevel);
+  float rawLightLevel = analogRead(lightSensor);
+  Serial.println(rawLightLevel);
+ 
+  // Convert 75-1000 range (of light sensor output) to 0-255 because analogWrite() only allows 0-255
+  float lightLevel = map( analogRead(lightSensor),75,1000,0,255); 
   
-  // brighten/dim LED
+  // brighten/dim LED equivalent to reading from lightSensor
   analogWrite(blueLED,lightLevel);
   
   
-  delay(10);
+  delay(50);
 }
